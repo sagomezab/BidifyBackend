@@ -1,17 +1,21 @@
 package edu.eci.arsw.bidify.dto;
 
 import java.math.BigDecimal;
-import edu.eci.arsw.bidify.security.entity.Usuario;
+
 import lombok.Data;
 @Data
 public class Puja implements Comparable<Puja> {
-    private Usuario postor;
+    //private Usuario postor;
     private BigDecimal oferta;
 
+    /*
+     * 
     public Puja(Usuario postor, BigDecimal oferta) {
         this.postor = postor;
         this.oferta = oferta;
     }
+    
+     */
 
     @Override
     public int compareTo(Puja otraPuja) {

@@ -11,7 +11,7 @@ import edu.eci.arsw.bidify.dto.MessageDto;
 import edu.eci.arsw.bidify.dto.SubastaDto;
 
 import edu.eci.arsw.bidify.model.Subasta;
-import edu.eci.arsw.bidify.security.entity.Usuario;
+
 
 
 @RestController
@@ -53,6 +53,8 @@ public class SubastaController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    /*
+     * 
     @PostMapping("/{subastaId}/pujas")
     public ResponseEntity<Subasta> recibirPuja(@PathVariable int subastaId,@RequestBody Usuario usuario, @RequestBody BigDecimal oferta) {
         Subasta subasta = subastaService.getSubastaById(subastaId).orElse(null);
@@ -64,7 +66,8 @@ public class SubastaController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    
+     */
     @PutMapping("/{subastaId}/finalizar")
     public ResponseEntity<Subasta> finalizarSubasta(@PathVariable int subastaId) {
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
@@ -85,7 +88,8 @@ public class SubastaController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    /*
+     * 
     @PutMapping("/{subastaId}")
     public ResponseEntity<Subasta> actualizarSubasta(@PathVariable("subastaId") int subastaId, @RequestBody SubastaDto subastaDto) {
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
@@ -106,5 +110,7 @@ public class SubastaController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+     */
 
 }

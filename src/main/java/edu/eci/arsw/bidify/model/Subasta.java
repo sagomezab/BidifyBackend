@@ -5,7 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import edu.eci.arsw.bidify.dto.MessageDto;
-import edu.eci.arsw.bidify.security.entity.Usuario;
+
 import lombok.Data;
 
 @Data
@@ -14,9 +14,9 @@ public class Subasta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotNull
-    @OneToOne 
-    private Usuario subastador;
+    //@NotNull
+    //@OneToOne 
+    //private Usuario subastador;
     @OneToOne
     private Producto producto;
     @NotNull
@@ -25,21 +25,21 @@ public class Subasta {
     private boolean estado;
     @NotNull
     private int cantidadDeOfertantes;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "subasta_usuario", joinColumns = @JoinColumn(name = "subasta_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
-    private Set<Usuario> oferentes = new HashSet<>();
+    //@ManyToMany(fetch = FetchType.EAGER)
+    //@JoinTable(name = "subasta_usuario", joinColumns = @JoinColumn(name = "subasta_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+    //private Set<Usuario> oferentes = new HashSet<>();
     private BigDecimal precioFinal;
-    @OneToOne
-    private Usuario ganador;
+    //@OneToOne
+    //private Usuario ganador;
     @ElementCollection
     private List<MessageDto> messageList = new ArrayList<>();
 
     public Subasta(){
         this.messageList = new ArrayList<>();
     }
-    public Subasta(Usuario subastador, Producto producto, BigDecimal precioInicial, boolean estado,
+    public Subasta( Producto producto, BigDecimal precioInicial, boolean estado,
                    int cantidadDeOfertantes){
-        this.subastador = subastador;
+        
         this.producto = producto;
         this.precioInicial = precioInicial;
         this.estado = estado;

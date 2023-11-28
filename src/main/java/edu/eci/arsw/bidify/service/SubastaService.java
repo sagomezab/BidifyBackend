@@ -6,7 +6,7 @@ import edu.eci.arsw.bidify.dto.Puja;
 import edu.eci.arsw.bidify.model.Producto;
 import edu.eci.arsw.bidify.model.Subasta;
 import edu.eci.arsw.bidify.repository.SubastaRepository;
-import edu.eci.arsw.bidify.security.entity.Usuario;
+
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -26,7 +26,7 @@ public class SubastaService implements Runnable{
     private final Lock lock = new ReentrantLock();
     private boolean activa = true;
     private BigDecimal precioActual = BigDecimal.ZERO;
-    private Usuario ganador = null;
+   
     private Queue<Puja> pujas = new PriorityQueue<>();
 
     public Subasta addSubasta(Subasta Subasta) {    
@@ -36,9 +36,7 @@ public class SubastaService implements Runnable{
     public List<Subasta> findAllSubastas(){
         return subastaRepository.findAll();
     }
-    public Optional<Subasta> getSubastaBySubastador(Usuario subastador){        
-        return subastaRepository.findBySubastador(subastador);
-    }
+    
     public Optional<Subasta> getSubastaById(int id){        
         return subastaRepository.findById(id);
     }
@@ -56,7 +54,7 @@ public class SubastaService implements Runnable{
                 if (puja != null) {
                     if (puja.getOferta().compareTo(precioActual) > 0) {
                         precioActual = puja.getOferta();
-                        ganador = puja.getPostor();
+                        //ganador = puja.getPostor();
                         // Notificar aquí
                     }
                 }
@@ -68,6 +66,8 @@ public class SubastaService implements Runnable{
         changeEstado();
         // Notificar finalización
     }
+    /*
+     * 
     public void recibirPuja(Usuario postor, BigDecimal oferta) {
         lock.lock();
         try {
@@ -78,6 +78,8 @@ public class SubastaService implements Runnable{
             lock.unlock();
         }
     }
+    
+     */
     public void finalizarSubasta(int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
         Subasta subasta = subastaOptional.get();
