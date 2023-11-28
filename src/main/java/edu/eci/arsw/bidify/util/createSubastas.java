@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import edu.eci.arsw.bidify.model.Producto;
+import edu.eci.arsw.bidify.model.Usuario;
 import edu.eci.arsw.bidify.service.ProductoService;
+import edu.eci.arsw.bidify.service.UsuarioService;
 
 
 @Component
@@ -17,13 +19,13 @@ public class createSubastas implements CommandLineRunner{
     
     @Autowired
     ProductoService productoService;
-    
+    @Autowired
+    UsuarioService usuarioService;
 
     
     @Override
     public void run(String... args) throws Exception {
         
-    
         //productos
         Producto producto1 = new Producto("Jordan One", (float) 600000, "https://phantom-expansion.unidadeditorial.es/6239da431613d30a7ade440a4719e3db/crop/0x378/1074x982/resize/828/f/jpg/assets/multimedia/imagenes/2022/03/21/16478732471407.jpg");
         Producto producto2 = new Producto("Camara", (float) 800000, "https://www.workshopexperience.com/wp-content/uploads/2017/07/marcas-de-camaras-fotograficas-4.jpg");
@@ -35,7 +37,13 @@ public class createSubastas implements CommandLineRunner{
         productoService.save(producto3);  
         productoService.save(producto4);  
         productoService.save(producto5);
-        
+        //usuarios
+        List<Producto> productos = new ArrayList<>(); 
+        productos.add(producto5);
+        productos.add(producto4);
+        productos.add(producto3);
+        Usuario usuario1 = new Usuario("migue", "Miguel Angel", "miguel@gmail.com", "123", productos);
+        usuarioService.registrarUsuario(usuario1);
         /*
         Subasta subasta1 = new Subasta(jaider, producto1, bigDecimalValue, false, 3, null);
         oferentes.add(miguel);
