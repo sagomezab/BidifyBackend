@@ -4,6 +4,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import edu.eci.arsw.bidify.service.SubastaService;
 import edu.eci.arsw.bidify.dto.Mensaje;
@@ -21,7 +22,9 @@ import edu.eci.arsw.bidify.model.Usuario;
 public class SubastaController {
     @Autowired
     private SubastaService subastaService;
-    
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @PostMapping
     public ResponseEntity<Subasta> createSubasta(@RequestBody Subasta subasta) {
         Subasta newSubasta = subastaService.addSubasta(subasta);
@@ -49,6 +52,7 @@ public class SubastaController {
         Subasta subasta = subastaService.addMessage(message, subastaId);
         
         if (subasta != null) {
+            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/messages", subasta);
             return new ResponseEntity<>(subasta, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -61,6 +65,7 @@ public class SubastaController {
         
         if (subasta != null && subasta.isEstado()) {
             subastaService.recibirPuja(usuario, oferta);
+            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId, subasta);
             return new ResponseEntity<>(subasta, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -73,7 +78,8 @@ public class SubastaController {
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
         if (subastaOptional.isPresent()) {
             Subasta subasta = subastaOptional.get();
-            subastaService.finalizarSubasta(subastaId); // Esto debería encargarse de la lógica para finalizar la subasta.
+            subastaService.finalizarSubasta(subastaId);
+            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/finalizar", subasta);
             return new ResponseEntity<>(subasta, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -91,19 +97,18 @@ public class SubastaController {
     
     @PutMapping("/{subastaId}")
     public ResponseEntity<Subasta> actualizarSubasta(@PathVariable("subastaId") int subastaId, @RequestBody SubastaDto subastaDto) {
+        
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
         if (subastaOptional.isPresent()) {
             Subasta subasta = subastaOptional.get();
-            // Actualiza los atributos de la subasta con los valores de subastaDto
             subasta.setId(subastaId);
             subasta.setEstado(subastaDto.isEstado());
             subasta.setGanador(subastaDto.getGanador());
             subasta.setMessageList(subastaDto.getMessageList());
             subasta.setOferentes(subastaDto.getOferentes());
             subasta.setPrecioFinal(subastaDto.getPrecioFinal());
-    
-            // Ahora guarda la subasta actualizada
             subastaService.addSubasta(subasta);
+            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/actualizacion", subasta);
             return new ResponseEntity<>(subasta, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
