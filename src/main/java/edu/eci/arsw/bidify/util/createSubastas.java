@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import edu.eci.arsw.bidify.model.Producto;
+import edu.eci.arsw.bidify.model.Subasta;
 import edu.eci.arsw.bidify.model.Usuario;
 import edu.eci.arsw.bidify.service.ProductoService;
+import edu.eci.arsw.bidify.service.SubastaService;
 import edu.eci.arsw.bidify.service.UsuarioService;
 
 
@@ -21,7 +23,8 @@ public class createSubastas implements CommandLineRunner{
     ProductoService productoService;
     @Autowired
     UsuarioService usuarioService;
-
+    @Autowired
+    SubastaService subastaService;
     
     @Override
     public void run(String... args) throws Exception {
@@ -37,36 +40,45 @@ public class createSubastas implements CommandLineRunner{
         productoService.save(producto3);  
         productoService.save(producto4);  
         productoService.save(producto5);
-        //usuarios
+        
         List<Producto> productos = new ArrayList<>(); 
         productos.add(producto5);
         productos.add(producto4);
         productos.add(producto3);
-        Usuario usuario1 = new Usuario("migue", "Miguel Angel", "miguel@gmail.com", "123", productos);
+
+
+        Usuario usuario1 = new Usuario("migue", "Miguel Angel", "miguel@gmail.com", "123");
+        Usuario usuario2 = new Usuario("jaider", "Jaider Gonzalez", "jaider@gmail.com", "123", productos);
+        Usuario usuario3 = new Usuario("santi", "Santiago Gonzalez", "santiago@gmail.com", "123");
+        Usuario usuario4 = new Usuario("camilo", "camilo Angel", "camilo@gmail.com", "123");
+        Usuario usuario5 = new Usuario("sebastian", "sebastian Gonzalez", "sebastian@gmail.com", "123", productos);
+        Usuario usuario6 = new Usuario("andrea", "andrea Gonzalez", "andrea@gmail.com", "123");
+        
         usuarioService.registrarUsuario(usuario1);
-        /*
-        Subasta subasta1 = new Subasta(jaider, producto1, bigDecimalValue, false, 3, null);
-        oferentes.add(miguel);
+        usuarioService.registrarUsuario(usuario2);
+        usuarioService.registrarUsuario(usuario3);
+        usuarioService.registrarUsuario(usuario4);
+        usuarioService.registrarUsuario(usuario5);
+        usuarioService.registrarUsuario(usuario6);
+
+        Set<Usuario> oferentes = new HashSet<>();
+        BigDecimal bigDecimalValue = new BigDecimal(Float.toString(producto5.getPrecio()));
+        Subasta subasta1 = new Subasta(usuario2, producto5, bigDecimalValue,true, 2);
+        oferentes.add(usuario1);
+        oferentes.add(usuario3);
         subasta1.setOferentes(oferentes);
-        subasta1.setPrecioFinal(bigDecimalValue);
-        subasta1.setGanador(miguel);
-        // Guardar la Subasta en la base de datos
-        subastaService.addSubasta(subasta1);
-
-        // Luego, crea y asocia los mensajes y actualiza la Subasta
-        Message mensaje1 = new Message();
-        Message mensaje2 = new Message();
-        messageList.add(mensaje1);
-        messageList.add(mensaje2);
-        subasta1.setMessageList(messageList);
-        subastaService.addSubasta(subasta1);
-
-         
-        Subasta subasta2 = new Subasta(miguel, producto2, bigDecimalValue2, false, 3, messageList);
         
+        Set<Usuario> oferentes2 = new HashSet<>();
+        BigDecimal bigDecimalValue2 = new BigDecimal(Float.toString(producto3.getPrecio()));
+        Subasta subasta2 = new Subasta(usuario5, producto3, bigDecimalValue2,true, 2);
+        oferentes2.add(usuario4);
+        oferentes2.add(usuario6);
+        subasta2.setOferentes(oferentes2);
+        
+        subastaService.addSubasta(subasta1);
         subastaService.addSubasta(subasta2);
+       
         
-        * 
-         */
+        
     }
 }

@@ -38,9 +38,9 @@ public class Subasta {
     public Subasta(){
         this.messageList = new ArrayList<>();
     }
-    public Subasta( Producto producto, BigDecimal precioInicial, boolean estado,
+    public Subasta(Usuario subastador, Producto producto, BigDecimal precioInicial, boolean estado,
                    int cantidadDeOfertantes){
-        
+        this.subastador = subastador;
         this.producto = producto;
         this.precioInicial = precioInicial;
         this.estado = estado;
