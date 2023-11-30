@@ -4,26 +4,20 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 import edu.eci.arsw.bidify.service.SubastaService;
-import edu.eci.arsw.bidify.dto.Mensaje;
 import edu.eci.arsw.bidify.dto.MessageDto;
 import edu.eci.arsw.bidify.dto.SubastaDto;
-
 import edu.eci.arsw.bidify.model.Subasta;
 import edu.eci.arsw.bidify.model.Usuario;
-
-
 
 @RestController
 @RequestMapping("/subasta")
 @CrossOrigin(origins = "*")
-public class SubastaController {
+public class SubastaController{
     @Autowired
     private SubastaService subastaService;
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping
     public ResponseEntity<Subasta> createSubasta(@RequestBody Subasta subasta) {
@@ -46,14 +40,12 @@ public class SubastaController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/{subastaId}/messages")
+    public ResponseEntity<List<MessageDto>> getMessageList(@PathVariable int subastaId) {
+        List<MessageDto> messageList = subastaService.getMessageList(subastaId);
 
-    @PostMapping("/{subastaId}/messages")
-    public ResponseEntity<Subasta> addMessageToSubasta(@PathVariable int subastaId, @RequestBody MessageDto message) {
-        Subasta subasta = subastaService.addMessage(message, subastaId);
-        
-        if (subasta != null) {
-            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/messages", subasta);
-            return new ResponseEntity<>(subasta, HttpStatus.OK);
+        if (messageList != null) {
+            return new ResponseEntity<>(messageList, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -65,55 +57,15 @@ public class SubastaController {
         
         if (subasta != null && subasta.isEstado()) {
             subastaService.recibirPuja(usuario, oferta);
-            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId, subasta);
+
             return new ResponseEntity<>(subasta, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    }
+    }    
     
     
-    @PutMapping("/{subastaId}/finalizar")
-    public ResponseEntity<Subasta> finalizarSubasta(@PathVariable int subastaId) {
-        Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
-        if (subastaOptional.isPresent()) {
-            Subasta subasta = subastaOptional.get();
-            subastaService.finalizarSubasta(subastaId);
-            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/finalizar", subasta);
-            return new ResponseEntity<>(subasta, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-    @GetMapping("/{subastaId}/messages")
-    public ResponseEntity<List<MessageDto>> getMessageList(@PathVariable int subastaId) {
-        List<MessageDto> messageList = subastaService.getMessageList(subastaId);
-        if (messageList != null) {
-            return new ResponseEntity<>(messageList, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
     
-    @PutMapping("/{subastaId}")
-    public ResponseEntity<Subasta> actualizarSubasta(@PathVariable("subastaId") int subastaId, @RequestBody SubastaDto subastaDto) {
-        
-        Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
-        if (subastaOptional.isPresent()) {
-            Subasta subasta = subastaOptional.get();
-            subasta.setId(subastaId);
-            subasta.setEstado(subastaDto.isEstado());
-            subasta.setGanador(subastaDto.getGanador());
-            subasta.setMessageList(subastaDto.getMessageList());
-            subasta.setOferentes(subastaDto.getOferentes());
-            subasta.setPrecioFinal(subastaDto.getPrecioFinal());
-            subastaService.addSubasta(subasta);
-            messagingTemplate.convertAndSend("/topic/subasta/" + subastaId + "/actualizacion", subasta);
-            return new ResponseEntity<>(subasta, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
     
     
 

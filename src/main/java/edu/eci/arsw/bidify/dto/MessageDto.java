@@ -11,16 +11,23 @@ public class MessageDto {
     @NotBlank
     private String senderEmail;
     @NotBlank
-    private Date time = new Date(System.currentTimeMillis());
+    private String time; // Cambiado a String
     @NotBlank
     private String replymessage;
 
     public MessageDto() {
+        this.time = new Date(System.currentTimeMillis()).toString(); // Convertir a cadena
     }
 
-    public MessageDto(@NotBlank String senderEmail, @NotBlank Date time, @NotBlank String replymessage) {
+    public MessageDto(@NotBlank String senderEmail, @NotBlank String time, @NotBlank String replymessage) {
         this.senderEmail = senderEmail;
         this.time = time;
         this.replymessage = replymessage;
     }
+    public MessageDto(@NotBlank String senderEmail, @NotBlank String replymessage) {
+        this.senderEmail = senderEmail;
+        this.time = new Date(System.currentTimeMillis()).toString();
+        this.replymessage = replymessage;
+    }
 }
+

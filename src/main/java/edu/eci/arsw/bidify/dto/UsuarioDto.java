@@ -10,7 +10,6 @@ public class UsuarioDto {
     private String nombre;
     private String email;
     private String password;
-    private List<Producto> productos;
 
     public UsuarioDto(String usuario, String nombre, String email, String password){
         this.usuario=usuario;

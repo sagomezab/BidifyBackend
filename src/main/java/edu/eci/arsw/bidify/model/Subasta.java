@@ -33,7 +33,8 @@ public class Subasta {
     @OneToOne
     private Usuario ganador;
     @ElementCollection
-    private List<MessageDto> messageList = new ArrayList<>();
+    @OrderColumn 
+    private List<MessageDto> messageList;
 
     public Subasta(){
         this.messageList = new ArrayList<>();

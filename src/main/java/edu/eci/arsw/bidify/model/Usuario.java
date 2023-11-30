@@ -26,8 +26,6 @@ public class Usuario {
     @NotNull
     private String email;
     private String password;
-    @OneToMany(mappedBy = "usuario")
-    private List<Producto> productos = new ArrayList<>();
 
     public Usuario(String userName, String nombre, String email, String password){
         this.userName=userName;
@@ -35,11 +33,5 @@ public class Usuario {
         this.email=email;
         this.password=password;
     }
-    public Usuario(String userName, String nombre, String email, String password, List<Producto> productos){
-        this.userName=userName;
-        this.nombre=nombre;
-        this.email=email;
-        this.password=password;
-        this.productos = productos;
-    }
+    
 }

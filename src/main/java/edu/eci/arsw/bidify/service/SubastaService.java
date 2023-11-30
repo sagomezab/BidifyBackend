@@ -56,6 +56,7 @@ public class SubastaService implements Runnable{
                     if (puja.getOferta().compareTo(precioActual) > 0) {
                         precioActual = puja.getOferta();
                         ganador = puja.getPostor();
+                        
                         // Notificar aquí
                     }
                 }
@@ -94,15 +95,26 @@ public class SubastaService implements Runnable{
     private void changeEstado() {
         activa = !activa;
     }
-    public Subasta addMessage(MessageDto add, int subastaId)  {
+    public Subasta addMessage(MessageDto messageDto, int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
-        Subasta subasta = subastaOptional.get();
 
-        subasta.addMessage(add);
-        return subastaRepository.save(subasta);
+        if (subastaOptional.isPresent()) {
+            Subasta subasta = subastaOptional.get();
+            subasta.addMessage(messageDto);
+            subastaRepository.save(subasta);
+            return subasta;
+        } else {
+            return null;
+        }
     }
-    public List<MessageDto> getMessageList(int subastaId){
+
+    public List<MessageDto> getMessageList(int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
-        return subastaOptional.get().getMessageList();
+
+        if (subastaOptional.isPresent()) {
+            return subastaOptional.get().getMessageList();
+        } else {
+            return new ArrayList<>(); // O devolver null según tu lógica
+        }
     }
 }

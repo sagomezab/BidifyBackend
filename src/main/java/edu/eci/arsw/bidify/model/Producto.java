@@ -22,9 +22,7 @@ public class Producto {
     @NotNull
     private String img;
     
-    @ManyToOne
-    @JsonIgnore
-    private Usuario usuario;
+    
 
     public Producto(){
     }
