@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,12 +27,25 @@ public class Usuario {
     @NotNull
     private String email;
     private String password;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    private List<Producto> productos;
+
 
     public Usuario(String userName, String nombre, String email, String password){
         this.userName=userName;
         this.nombre=nombre;
         this.email=email;
         this.password=password;
+        productos = new ArrayList<>();
     }
     
+    public void addProducto(Producto producto) {
+        productos.add(producto);
+        producto.setUsuario(this);
+    }
+
+    public void removeProducto(Producto producto) {
+        productos.remove(producto);
+        producto.setUsuario(null);
+    }
 }

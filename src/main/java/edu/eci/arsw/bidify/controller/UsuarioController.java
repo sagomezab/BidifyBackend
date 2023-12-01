@@ -1,6 +1,7 @@
 package edu.eci.arsw.bidify.controller;
 
 import edu.eci.arsw.bidify.dto.Mensaje;
+import edu.eci.arsw.bidify.model.Producto;
 import edu.eci.arsw.bidify.model.Usuario;
 import edu.eci.arsw.bidify.service.UsuarioService;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/usuario")
@@ -59,6 +64,25 @@ public class UsuarioController {
             return new ResponseEntity<>(new Mensaje("Login exitoso"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new Mensaje("Credenciales inválidas"), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @Transactional
+    @GetMapping("/productos/{userName}")
+    public ResponseEntity<?> getProductos(@PathVariable("userName") String userName) {
+        Usuario usuario = usuarioService.findByUserName(userName);
+        if (usuario == null) {
+            return new ResponseEntity<>(new Mensaje("El usuario no existe"), HttpStatus.NOT_FOUND);
+        }
+        List<Producto> productos = usuario.getProductos();
+        if (productos.isEmpty()) {
+            return new ResponseEntity<>(new Mensaje("El usuario no tiene productos"), HttpStatus.NOT_FOUND);
+        } else {
+            List<String> nombresProductos = new ArrayList<>();
+            for (Producto producto : productos) {
+                nombresProductos.add(producto.getNombre());
+            }
+            return new ResponseEntity<>(nombresProductos, HttpStatus.OK);
         }
     }
 }

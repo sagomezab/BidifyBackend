@@ -47,6 +47,18 @@ public class createSubastas implements CommandLineRunner{
         productos.add(producto3);
 
 
+        
+        Usuario usuario0 = new Usuario("Karen", "KarenLi", "karen@gmail.com", "123");
+        usuarioService.registrarUsuario(usuario0);
+        Producto productoprueba1 = new Producto("Jordan One", (float) 600000, "https://phantom-expansion.unidadeditorial.es/6239da431613d30a7ade440a4719e3db/crop/0x378/1074x982/resize/828/f/jpg/assets/multimedia/imagenes/2022/03/21/16478732471407.jpg");
+        productoprueba1.setUsuario(usuario0);
+        productoService.save(productoprueba1);
+        Producto productoprueba2 = new Producto("Camara", (float) 800000, "https://www.workshopexperience.com/wp-content/uploads/2017/07/marcas-de-camaras-fotograficas-4.jpg");
+        productoprueba2.setUsuario(usuario0);
+        productoService.save(productoprueba2);
+        usuario0.addProducto(productoprueba2);
+        usuario0.addProducto(productoprueba1);
+        
         Usuario usuario1 = new Usuario("migue", "Miguel Angel", "miguel@gmail.com", "123");
         Usuario usuario2 = new Usuario("jaider", "Jaider Gonzalez", "jaider@gmail.com", "123");
         Usuario usuario3 = new Usuario("santi", "Santiago Gonzalez", "santiago@gmail.com", "123");
