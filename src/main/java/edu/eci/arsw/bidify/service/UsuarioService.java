@@ -1,6 +1,8 @@
 package edu.eci.arsw.bidify.service;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    @Transactional
     public void deleteUserName(String userName) {
         usuarioRepository.deleteByUserName(userName);
     }
