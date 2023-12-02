@@ -10,9 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -78,11 +78,32 @@ public class UsuarioController {
         if (productos.isEmpty()) {
             return new ResponseEntity<>(new Mensaje("El usuario no tiene productos"), HttpStatus.NOT_FOUND);
         } else {
-            List<String> nombresProductos = new ArrayList<>();
-            for (Producto producto : productos) {
-                nombresProductos.add(producto.getNombre());
-            }
-            return new ResponseEntity<>(nombresProductos, HttpStatus.OK);
+            return new ResponseEntity<>(productos, HttpStatus.OK);
         }
     }
+
+    @GetMapping("/productos/todos")
+    public ResponseEntity<?> getProductosDeTodosLosUsuarios() {
+        List<Usuario> usuarios = usuarioService.findAll();
+
+        if (usuarios.isEmpty()) {
+            return new ResponseEntity<>(new Mensaje("No hay usuarios disponibles"), HttpStatus.NOT_FOUND);
+        } else {
+            Map<String, List<Producto>> productosPorUsuario = new HashMap<>();
+
+            for (Usuario usuario : usuarios) {
+                List<Producto> productosUsuario = usuario.getProductos();
+                productosPorUsuario.put(usuario.getNombre(), productosUsuario);
+            }
+
+            if (productosPorUsuario.isEmpty()) {
+                return new ResponseEntity<>(new Mensaje("Ningún usuario tiene productos"), HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(productosPorUsuario, HttpStatus.OK);
+            }
+        }
+    }
+
 }
+
+    

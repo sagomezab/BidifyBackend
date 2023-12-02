@@ -50,10 +50,10 @@ public class createSubastas implements CommandLineRunner{
         
         Usuario usuario0 = new Usuario("Karen", "KarenLi", "karen@gmail.com", "123");
         usuarioService.registrarUsuario(usuario0);
-        Producto productoprueba1 = new Producto("Jordan One", (float) 600000, "https://phantom-expansion.unidadeditorial.es/6239da431613d30a7ade440a4719e3db/crop/0x378/1074x982/resize/828/f/jpg/assets/multimedia/imagenes/2022/03/21/16478732471407.jpg");
+        Producto productoprueba1 = new Producto("Plancha", (float) 600000, "https://www.hola.com/imagenes/seleccion/20201210180792/mejor-plancha-de-pelo/0-898-977/ghd-gold-planchas-a.jpg");
         productoprueba1.setUsuario(usuario0);
         productoService.save(productoprueba1);
-        Producto productoprueba2 = new Producto("Camara", (float) 800000, "https://www.workshopexperience.com/wp-content/uploads/2017/07/marcas-de-camaras-fotograficas-4.jpg");
+        Producto productoprueba2 = new Producto("Samba Adidas", (float) 800000, "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/3bbecbdf584e40398446a8bf0117cf62_9366/Tenis_Samba_OG_Blanco_B75806_01_standard.jpg");
         productoprueba2.setUsuario(usuario0);
         productoService.save(productoprueba2);
         usuario0.addProducto(productoprueba2);
