@@ -104,6 +104,20 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/info/{userName}")
+    public ResponseEntity<?> getInfoByUserName(@PathVariable String userName) {
+        try {
+            Usuario usuario = usuarioService.findByUserName(userName);
+            if (usuario != null) {
+                return new ResponseEntity<>(usuario, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al obtener la información del usuario", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
 
     
