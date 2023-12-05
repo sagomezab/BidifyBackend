@@ -1,5 +1,6 @@
 package edu.eci.arsw.bidify;
 import edu.eci.arsw.bidify.controller.SubastaController;
+import edu.eci.arsw.bidify.controller.WebSocketHandler;
 import edu.eci.arsw.bidify.dto.MessageDto;
 import edu.eci.arsw.bidify.model.Producto;
 import edu.eci.arsw.bidify.model.Subasta;
@@ -36,7 +37,9 @@ public class SubastaControllerTest {
     private UsuarioService usuarioService;
     @Autowired
     private SubastaController subastaController;
-
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+    
     @Test
     public void testCreateSubasta() {
         // Arrange
@@ -56,7 +59,7 @@ public class SubastaControllerTest {
         subasta.setOferentes(oferentes);
         subastaService.addSubasta(subasta);
         // Act
-        ResponseEntity<Subasta> response = subastaController.createSubasta(subasta);
+        ResponseEntity<Subasta> response = webSocketHandler.createSubasta(subasta);
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

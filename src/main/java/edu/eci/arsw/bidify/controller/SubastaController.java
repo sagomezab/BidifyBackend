@@ -19,11 +19,6 @@ public class SubastaController{
     @Autowired
     private SubastaService subastaService;
 
-    @PostMapping
-    public ResponseEntity<Subasta> createSubasta(@RequestBody Subasta subasta) {
-        Subasta newSubasta = subastaService.addSubasta(subasta);
-        return new ResponseEntity<>(newSubasta, HttpStatus.OK);
-    }
 
     @GetMapping
     public ResponseEntity<List<Subasta>> getAllSubastas() {

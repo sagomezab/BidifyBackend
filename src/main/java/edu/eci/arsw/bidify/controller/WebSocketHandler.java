@@ -90,5 +90,12 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-}
+    }
+    
+    @MessageMapping("/subasta/crear")
+    public ResponseEntity<Subasta> createSubasta(@RequestBody Subasta subasta) {
+        Subasta newSubasta = subastaService.addSubasta(subasta);
+        msgt.convertAndSend("/topic/subasta/crear", subasta);
+        return new ResponseEntity<>(newSubasta, HttpStatus.OK);
+    }
 }
