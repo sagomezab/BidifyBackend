@@ -27,7 +27,7 @@ public class SubastaController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Subasta> getSubastaById(@PathVariable int id) {
+    public synchronized ResponseEntity<Subasta> getSubastaById(@PathVariable int id) {
         
         Optional<Subasta> subasta = subastaService.getSubastaById(id);
         if (subasta.isPresent()) {

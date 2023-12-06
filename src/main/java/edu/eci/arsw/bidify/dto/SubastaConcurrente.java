@@ -37,20 +37,14 @@ public class SubastaConcurrente extends Thread{
     }
     
     public void run() {
-        subasta = subastaService.getSubastaById(idSubasta).get();
-        precioActual = subasta.getPrecioFinal();
-        ganador = subasta.getGanador();
-        messageList = subasta.getMessageList();
-        if(!subasta.isEstado()){
+        actualizarDatos();
+        if (!subasta.isEstado()) {
             subasta.setEstado(true);
             subastaService.save(subasta);
         }
         System.out.println(subasta.isEstado());
         while (subasta.isEstado()) {
-            subasta = subastaService.getSubastaById(idSubasta).get();
-            precioActual = subasta.getPrecioFinal();
-            ganador = subasta.getGanador();
-            messageList = subasta.getMessageList();
+            
             monitor.suspenderHilos();
             System.out.println("vamos a esperar...");
             try {
@@ -59,11 +53,16 @@ public class SubastaConcurrente extends Thread{
                 e.printStackTrace();
             }
             System.out.println("volvimos!!!");
+            actualizarDatos();
             verificarPujas();
-            Puja puja = pujas.poll();
+            Puja puja = null;
+        
+            synchronized (monitor) {
+                puja = pujas.poll();
+            }
             if (puja != null) {
+                
                 if (puja.getOferta().compareTo(precioActual) > 0) {
-                    System.out.println("Nuestro precioActual es:"+ precioActual);
                     precioActual = puja.getOferta();
                     ganador = puja.getPostor();
                     subasta.setGanador(ganador);
@@ -71,40 +70,38 @@ public class SubastaConcurrente extends Thread{
                     subastaService.save(subasta);
                 }
             }
-            subasta = subastaService.getSubastaById(subasta.getId()).get();
+            
+        }
+    }
+    public void verificarPujas() {
+        synchronized (monitor) {
+            subasta = subastaService.getSubastaById(idSubasta).get();
             precioActual = subasta.getPrecioFinal();
             ganador = subasta.getGanador();
-            messageList = subasta.getMessageList();
-                
+            for (MessageDto messageDto : subasta.getMessageList()) {
+                Optional<Usuario> usuarioOptional = usuarioService.getUsuarioByUserName(messageDto.getSenderEmail());
+                usuarioOptional.ifPresent(usuario -> {
+                    BigDecimal oferta = new BigDecimal(messageDto.getReplymessage());
+                    recibirPuja(usuario, oferta);
+                });
+            }
         }
-        
     }
-    public void verificarPujas(){
-        subasta = subastaService.getSubastaById(idSubasta).get();
+    public synchronized void actualizarDatos(){
+        subasta = subastaService.getSubastaById(subasta.getId()).get();
         precioActual = subasta.getPrecioFinal();
         ganador = subasta.getGanador();
-        List<MessageDto> messageList2 = subasta.getMessageList();
-        for(int i = 0; i < messageList2.size(); i++){
-            MessageDto messageDto = messageList2.get(i);
-            Optional<Usuario> usuarioOptional = usuarioService.getUsuarioByUserName(messageDto.getSenderEmail());
-            usuarioOptional.ifPresent(usuario -> {
-                BigDecimal oferta = new BigDecimal(messageDto.getReplymessage());
-                recibirPuja(usuario, oferta);
-            });
-        }
-    }   
-    public synchronized void recibirPuja(Usuario postor, BigDecimal oferta) {
+        messageList = subasta.getMessageList();
+    }
+    public void recibirPuja(Usuario postor, BigDecimal oferta) {
         subasta = subastaService.getSubastaById(idSubasta).get();
         precioActual = subasta.getPrecioFinal();
         ganador = subasta.getGanador();
         messageList = subasta.getMessageList();
-        lock.lock();
-        try {
-            if (subasta.isEstado() && oferta.compareTo(precioActual) > 0) {
+        synchronized(monitor){
+           if (subasta.isEstado() && oferta.compareTo(precioActual) > 0) {
                 pujas.offer(new Puja(postor, oferta));
-            }
-        } finally {
-            lock.unlock();
+            } 
         }
     }
 

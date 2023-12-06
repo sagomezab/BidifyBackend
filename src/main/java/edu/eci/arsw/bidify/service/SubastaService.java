@@ -26,7 +26,7 @@ public class SubastaService{
     private SubastaRepository subastaRepository;
     @Autowired
     private UsuarioService usuarioService;
-    private final Object subastaLock = new Object();
+    
     private final Monitor monitor;
     public Subasta addSubasta(Subasta Subasta) {    
         return subastaRepository.save(Subasta);
@@ -66,7 +66,7 @@ public class SubastaService{
             subastaActual.setEstado(true);
             subastaRepository.save(subastaActual);
             
-            synchronized (subastaLock) {
+            synchronized (monitor) {
                 crearThread(subastaActual);  
             }
             
@@ -79,6 +79,7 @@ public class SubastaService{
         nuevaSubasta.setIdSubasta(subastaActual.getId());
         nuevaSubasta.start();
         System.out.println(nuevaSubasta.getName() + " está: " + nuevaSubasta.getState() + "...");
+
     }
     public Subasta addMessage(MessageDto messageDto, int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
@@ -107,6 +108,7 @@ public class SubastaService{
             subastaActual.addMessage(messageDto);
             subastaRepository.save(subastaActual);
             monitor.reanudarHilos();
+            
             return subastaActual;
         } else {
             return null;
