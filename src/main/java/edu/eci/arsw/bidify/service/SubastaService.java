@@ -2,6 +2,7 @@ package edu.eci.arsw.bidify.service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.eci.arsw.bidify.dto.MessageDto;
+import edu.eci.arsw.bidify.dto.Monitor;
 import edu.eci.arsw.bidify.dto.SubastaConcurrente;
 import edu.eci.arsw.bidify.model.Producto;
 import edu.eci.arsw.bidify.model.Subasta;
@@ -10,6 +11,9 @@ import edu.eci.arsw.bidify.repository.SubastaRepository;
 
 
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.Data;
@@ -22,7 +26,8 @@ public class SubastaService{
     private SubastaRepository subastaRepository;
     @Autowired
     private UsuarioService usuarioService;
-
+    private final Object subastaLock = new Object();
+    private final Monitor monitor;
     public Subasta addSubasta(Subasta Subasta) {    
         return subastaRepository.save(Subasta);
     }
@@ -53,17 +58,28 @@ public class SubastaService{
         subastaRepository.save(subastaActual);
         
     }
-
-    public void iniciarSubasta(int subastaId){
+    @Transactional
+    public void iniciarSubasta(int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
-        Subasta subastaActual = subastaOptional.get();
-        subastaActual.setEstado(true);
-        subastaRepository.save(subastaActual);
-        SubastaConcurrente nuevaSubasta = new SubastaConcurrente(subastaActual, this, usuarioService);
-        nuevaSubasta.setIdSubasta(subastaId);
-        nuevaSubasta.start();
+        if (subastaOptional.isPresent()) {
+            Subasta subastaActual = subastaOptional.get();
+            subastaActual.setEstado(true);
+            subastaRepository.save(subastaActual);
+            
+            synchronized (subastaLock) {
+                crearThread(subastaActual);  
+            }
+            
+        } else {
+            System.out.println("Subasta con id " + subastaId + " no encontrada.");
+        }
     }
-    
+    public void crearThread(Subasta subastaActual){
+        SubastaConcurrente nuevaSubasta = new SubastaConcurrente(subastaActual, this, usuarioService, monitor);
+        nuevaSubasta.setIdSubasta(subastaActual.getId());
+        nuevaSubasta.start();
+        System.out.println(nuevaSubasta.getName() + " está: " + nuevaSubasta.getState() + "...");
+    }
     public Subasta addMessage(MessageDto messageDto, int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
         if (subastaOptional.isPresent()) {
@@ -78,7 +94,6 @@ public class SubastaService{
 
     public List<MessageDto> getMessageList(int subastaId) {
         Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
-
         if (subastaOptional.isPresent()) {
             return subastaOptional.get().getMessageList();
         } else {
@@ -91,6 +106,7 @@ public class SubastaService{
             Subasta subastaActual = subastaOptional.get();
             subastaActual.addMessage(messageDto);
             subastaRepository.save(subastaActual);
+            monitor.reanudarHilos();
             return subastaActual;
         } else {
             return null;

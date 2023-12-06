@@ -24,7 +24,7 @@ public class Subasta {
     @NotNull
     private BigDecimal precioInicial;
     @NotNull
-    private boolean estado;
+    private volatile boolean estado;
     @NotNull
     private int cantidadDeOfertantes;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -54,7 +54,13 @@ public class Subasta {
     }
     public void addMessage(MessageDto message) {
         messageList.add(message);
-        
+    }
+    public synchronized boolean isEstado() {
+        return estado;
+    }
+
+    public synchronized void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
 }
