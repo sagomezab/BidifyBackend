@@ -80,7 +80,9 @@ public class SubastaConcurrente extends Thread{
         
     }
     public void verificarPujas(){
-        subasta = subastaService.getSubastaById(subasta.getId()).get();
+        subasta = subastaService.getSubastaById(idSubasta).get();
+        precioActual = subasta.getPrecioFinal();
+        ganador = subasta.getGanador();
         List<MessageDto> messageList2 = subasta.getMessageList();
         for(int i = 0; i < messageList2.size(); i++){
             MessageDto messageDto = messageList2.get(i);
