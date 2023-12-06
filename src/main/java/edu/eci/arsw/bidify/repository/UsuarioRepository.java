@@ -1,5 +1,7 @@
 package edu.eci.arsw.bidify.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
     boolean existsByUserName(String nombre);
     boolean existsById(Long id);
     void deleteByUserName(String userName);
-    Usuario findByUserName(String userName);
+    Optional<Usuario> findByUserName(String userName);
+    
 }

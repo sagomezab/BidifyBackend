@@ -75,14 +75,14 @@ public class createSubastas implements CommandLineRunner{
 
         Set<Usuario> oferentes = new HashSet<>();
         BigDecimal bigDecimalValue = new BigDecimal(Float.toString(producto5.getPrecio()));
-        Subasta subasta1 = new Subasta(usuario2, producto5, bigDecimalValue,true, 2);
+        Subasta subasta1 = new Subasta(usuario2, producto5, bigDecimalValue,false, 2);
         oferentes.add(usuario1);
         oferentes.add(usuario3);
         subasta1.setOferentes(oferentes);
         
         Set<Usuario> oferentes2 = new HashSet<>();
         BigDecimal bigDecimalValue2 = new BigDecimal(Float.toString(producto3.getPrecio()));
-        Subasta subasta2 = new Subasta(usuario5, producto3, bigDecimalValue2,true, 2);
+        Subasta subasta2 = new Subasta(usuario5, producto3, bigDecimalValue2,false, 2);
         oferentes2.add(usuario4);
         oferentes2.add(usuario6);
         subasta2.setOferentes(oferentes2);

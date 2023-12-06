@@ -28,6 +28,7 @@ public class SubastaController{
 
     @GetMapping("/{id}")
     public ResponseEntity<Subasta> getSubastaById(@PathVariable int id) {
+        
         Optional<Subasta> subasta = subastaService.getSubastaById(id);
         if (subasta.isPresent()) {
             return new ResponseEntity<>(subasta.get(), HttpStatus.OK);
@@ -46,18 +47,7 @@ public class SubastaController{
         }
     }
     
-    @PostMapping("/{subastaId}/pujas")
-    public ResponseEntity<Subasta> recibirPuja(@PathVariable int subastaId,@RequestBody Usuario usuario, @RequestBody BigDecimal oferta) {
-        Subasta subasta = subastaService.getSubastaById(subastaId).orElse(null);
-        
-        if (subasta != null && subasta.isEstado()) {
-            subastaService.recibirPuja(usuario, oferta);
-
-            return new ResponseEntity<>(subasta, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }    
+       
     
     
     

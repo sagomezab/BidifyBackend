@@ -3,7 +3,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import edu.eci.arsw.bidify.dto.MessageDto;
 
 import lombok.Data;
@@ -33,7 +34,8 @@ public class Subasta {
     @OneToOne
     private Usuario ganador;
     @ElementCollection
-    @OrderColumn 
+    @OrderColumn
+    @Fetch(FetchMode.JOIN)
     private List<MessageDto> messageList;
 
     public Subasta(){
@@ -47,6 +49,7 @@ public class Subasta {
         this.estado = estado;
         this.cantidadDeOfertantes = cantidadDeOfertantes;
         this.messageList = new ArrayList<>();
+        this.precioFinal = precioInicial;
         
     }
     public void addMessage(MessageDto message) {

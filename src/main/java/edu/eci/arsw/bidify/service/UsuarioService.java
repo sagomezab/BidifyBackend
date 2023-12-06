@@ -1,5 +1,6 @@
 package edu.eci.arsw.bidify.service;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -31,6 +32,10 @@ public class UsuarioService {
         Usuario user = usuarioRepository.findByUserNameAndPassword(userName, password);
         return user != null;
     }
+    
+    public Optional<Usuario> getUsuarioByUserName(String userName) {
+        return usuarioRepository.findByUserName(userName);
+    }
 
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
@@ -48,7 +53,5 @@ public class UsuarioService {
         return usuarioRepository.existsByUserName(userName);
     }
 
-    public Usuario findByUserName(String userName) {
-        return usuarioRepository.findByUserName(userName);
-    }
+    
 }

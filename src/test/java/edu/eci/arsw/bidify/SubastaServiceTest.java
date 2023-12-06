@@ -40,15 +40,6 @@ public class SubastaServiceTest {
         assertEquals(subasta, result);
     }
 
-    @Test
-    public void testRecibirPuja() {
-        // Arrange
-        Usuario postor = new Usuario();
-        BigDecimal oferta = BigDecimal.TEN;
-        // Act
-        subastaService.recibirPuja(postor, oferta);
-        // Assert
-    }
 
     @Test
     public void testFinalizarSubasta() {

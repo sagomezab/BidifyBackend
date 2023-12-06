@@ -119,7 +119,8 @@ public class SubastaControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
+    /*
+     * 
     @Test
     public void testRecibirPuja() {
         // Arrange
@@ -145,7 +146,12 @@ public class SubastaControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
+    
+     */
 
+
+    /*
+     * 
     @Test
     public void testRecibirPujaInvalidSubasta() {
         // Arrange
@@ -157,7 +163,11 @@ public class SubastaControllerTest {
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+    
+     */
 
+     /*
+      * 
     @Test
     public void testRecibirPujaSubastaNoActiva() {
         // Arrange
@@ -182,4 +192,6 @@ public class SubastaControllerTest {
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+    
+      */
 }

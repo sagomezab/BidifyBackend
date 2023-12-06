@@ -32,23 +32,11 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
     @Autowired
     private SubastaService subastaService;
 
-    @MessageMapping("/{subastaId}/pujas")
-    public ResponseEntity<Subasta> recibirPuja(@PathVariable int subastaId,@RequestBody Usuario usuario, @RequestBody BigDecimal oferta) {
-        Subasta subasta = subastaService.getSubastaById(subastaId).orElse(null);
-        
-        if (subasta != null && subasta.isEstado()) {
-            subastaService.recibirPuja(usuario, oferta);
-            msgt.convertAndSend("/topic/subasta/" + subastaId + "/puja", subasta);
-            return new ResponseEntity<>(subasta, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @MessageMapping("/{subastaId}/messages")
     public ResponseEntity<Subasta> addMessageToSubasta(@DestinationVariable int subastaId, @RequestBody MessageDto messageDto) {
         
-        Subasta subasta = subastaService.addMessage(messageDto, subastaId);
+        Subasta subasta = subastaService.addMessageAndProcessBid(messageDto, subastaId);
 
         if (subasta != null) {
             msgt.convertAndSend("/topic/subasta/" + subastaId + "/messages", subasta);
@@ -58,9 +46,21 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
         }
     }
 
+    @MessageMapping("/subasta/{id}")
+    public ResponseEntity<Subasta> getMontoGanador(@DestinationVariable int subastaId) {
+        
+        Optional<Subasta> subasta = subastaService.getSubastaById(subastaId);
+        if (subasta.isPresent()) {
+            msgt.convertAndSend("/topic/subasta/" + subastaId + "/obtener", subasta);
+            return new ResponseEntity<>(subasta.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @MessageMapping("/{subastaId}/finalizar")
-    public ResponseEntity<Subasta> finalizarSubasta(@PathVariable int subastaId) {
+    public ResponseEntity<Subasta> finalizarSubasta(@DestinationVariable  int subastaId) {
+
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
         if (subastaOptional.isPresent()) {
             Subasta subasta = subastaOptional.get();
@@ -71,7 +71,19 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+    @MessageMapping("/{subastaId}/iniciar")
+    public ResponseEntity<Subasta> iniciarSubasta(@DestinationVariable  int subastaId) {
+
+        Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
+        if (subastaOptional.isPresent()) {
+            Subasta subasta = subastaOptional.get();
+            subastaService.iniciarSubasta(subastaId);
+            msgt.convertAndSend("/topic/subasta/" + subastaId + "/iniciar", subasta);
+            return new ResponseEntity<>(subasta, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
     @MessageMapping("/{subastaId}")
     public ResponseEntity<Subasta> actualizarSubasta(@PathVariable("subastaId") int subastaId, @RequestBody SubastaDto subastaDto) {
 

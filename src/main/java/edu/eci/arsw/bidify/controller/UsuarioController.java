@@ -70,7 +70,7 @@ public class UsuarioController {
     @Transactional
     @GetMapping("/productos/{userName}")
     public ResponseEntity<?> getProductos(@PathVariable("userName") String userName) {
-        Usuario usuario = usuarioService.findByUserName(userName);
+        Usuario usuario = usuarioService.getUsuarioByUserName(userName).get();
         if (usuario == null) {
             return new ResponseEntity<>(new Mensaje("El usuario no existe"), HttpStatus.NOT_FOUND);
         }
@@ -107,7 +107,7 @@ public class UsuarioController {
     @GetMapping("/info/{userName}")
     public ResponseEntity<?> getInfoByUserName(@PathVariable String userName) {
         try {
-            Usuario usuario = usuarioService.findByUserName(userName);
+            Usuario usuario = usuarioService.getUsuarioByUserName(userName).get();
             if (usuario != null) {
                 return new ResponseEntity<>(usuario, HttpStatus.OK);
             } else {
