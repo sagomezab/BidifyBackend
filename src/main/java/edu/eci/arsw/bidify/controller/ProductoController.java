@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import edu.eci.arsw.bidify.dto.Mensaje;
 import edu.eci.arsw.bidify.dto.ProductoDto;
 import edu.eci.arsw.bidify.model.Producto;
+import edu.eci.arsw.bidify.model.Usuario;
+import edu.eci.arsw.bidify.repository.UsuarioRepository;
 import edu.eci.arsw.bidify.service.ProductoService;
+import edu.eci.arsw.bidify.service.UsuarioService;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ public class ProductoController {
 
     @Autowired
     ProductoService productoService;
+    @Autowired
+    UsuarioService usuarioService;
 
     @GetMapping("/lista")
     public ResponseEntity<List<Producto>> list(){
@@ -44,8 +49,9 @@ public class ProductoController {
     }
 
     
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody ProductoDto productoDto){
+    @PutMapping("/create/{userName}")
+    public ResponseEntity<?> create(@PathVariable("userName")String userName, @RequestBody ProductoDto productoDto){
+        Usuario usuario = usuarioService.getUsuarioByUserName(userName).get();
         if(StringUtils.isBlank(productoDto.getNombre()))
             return new ResponseEntity(new Mensaje("el nombre es obligatorio"), HttpStatus.BAD_REQUEST);
         if(productoDto.getPrecio()==null || productoDto.getPrecio()<0 )
@@ -53,7 +59,9 @@ public class ProductoController {
         if(productoService.existsByNombre(productoDto.getNombre()))
             return new ResponseEntity(new Mensaje("ese nombre ya existe"), HttpStatus.BAD_REQUEST);
         Producto producto = new Producto(productoDto.getNombre(), productoDto.getPrecio(), productoDto.getImg());
+        producto.setUsuario(usuario);
         productoService.save(producto);
+        usuario.addProducto(producto);
         return new ResponseEntity(new Mensaje("producto creado"), HttpStatus.OK);
     }
 

@@ -46,7 +46,6 @@ public class createSubastas implements CommandLineRunner{
         productos.add(producto4);
         productos.add(producto3);
 
-
         
         Usuario usuario0 = new Usuario("Karen", "KarenLi", "karen@gmail.com", "123");
         usuarioService.registrarUsuario(usuario0);
