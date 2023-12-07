@@ -106,9 +106,7 @@ public class SubastaService{
         if (subastaOptional.isPresent()) {
             Subasta subastaActual = subastaOptional.get();
             subastaActual.addMessage(messageDto);
-            subastaRepository.save(subastaActual);
             monitor.reanudarHilos();
-            
             return subastaActual;
         } else {
             return null;

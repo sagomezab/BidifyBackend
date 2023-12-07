@@ -37,6 +37,11 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
     public ResponseEntity<Subasta> addMessageToSubasta(@DestinationVariable int subastaId, @RequestBody MessageDto messageDto) {
         
         Subasta subasta = subastaService.addMessageAndProcessBid(messageDto, subastaId);
+        while(subastaService.getMonitor().isSuspendido() == false){
+
+        }
+        subasta = subastaService.getSubastaById(subastaId).get();
+        System.out.println(subasta.getPrecioFinal());
 
         if (subasta != null) {
             msgt.convertAndSend("/topic/subasta/" + subastaId + "/messages", subasta);

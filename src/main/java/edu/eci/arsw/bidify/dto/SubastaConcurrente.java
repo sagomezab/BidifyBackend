@@ -44,7 +44,6 @@ public class SubastaConcurrente extends Thread{
         }
         System.out.println(subasta.isEstado());
         while (subasta.isEstado()) {
-            
             monitor.suspenderHilos();
             System.out.println("vamos a esperar...");
             try {
