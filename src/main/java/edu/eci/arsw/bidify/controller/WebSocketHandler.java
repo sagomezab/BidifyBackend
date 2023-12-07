@@ -34,15 +34,13 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
 
 
     @MessageMapping("/{subastaId}/messages")
-    public ResponseEntity<Subasta> addMessageToSubasta(@DestinationVariable int subastaId, @RequestBody MessageDto messageDto) {
+    public synchronized ResponseEntity<Subasta> addMessageToSubasta(@DestinationVariable int subastaId, @RequestBody MessageDto messageDto) {
         
         Subasta subasta = subastaService.addMessageAndProcessBid(messageDto, subastaId);
         while(subastaService.getMonitor().isSuspendido() == false){
-
         }
         subasta = subastaService.getSubastaById(subastaId).get();
         System.out.println(subasta.getPrecioFinal());
-
         if (subasta != null) {
             msgt.convertAndSend("/topic/subasta/" + subastaId + "/messages", subasta);
             return new ResponseEntity<>(subasta, HttpStatus.OK);
@@ -78,7 +76,6 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
     }
     @MessageMapping("/{subastaId}/iniciar")
     public ResponseEntity<Subasta> iniciarSubasta(@DestinationVariable  int subastaId) {
-
         Optional<Subasta> subastaOptional = subastaService.getSubastaById(subastaId);
         if (subastaOptional.isPresent()) {
             Subasta subasta = subastaOptional.get();
