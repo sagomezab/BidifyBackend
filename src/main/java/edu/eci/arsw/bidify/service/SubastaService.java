@@ -112,4 +112,13 @@ public class SubastaService{
             return null;
         }
     }
+
+    public void añadirParticipante(int subastaId, Usuario usuario) {
+        Optional<Subasta> subastaOptional = subastaRepository.findById(subastaId);
+        if (subastaOptional.isPresent()) {
+            Subasta subasta = subastaOptional.get();
+            subasta.añadirOferente(usuario);
+            subastaRepository.save(subasta);
+        }
+    }
 }

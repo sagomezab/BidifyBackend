@@ -24,6 +24,7 @@ import edu.eci.arsw.bidify.dto.SubastaDto;
 import edu.eci.arsw.bidify.model.Subasta;
 import edu.eci.arsw.bidify.model.Usuario;
 import edu.eci.arsw.bidify.service.SubastaService;
+import edu.eci.arsw.bidify.service.UsuarioService;
 
 @Controller
 public class WebSocketHandler extends StompSessionHandlerAdapter{
@@ -31,7 +32,8 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
     SimpMessagingTemplate msgt;
     @Autowired
     private SubastaService subastaService;
-
+    @Autowired
+    private UsuarioService usuarioService;
 
     @MessageMapping("/{subastaId}/messages")
     public synchronized ResponseEntity<Subasta> addMessageToSubasta(@DestinationVariable int subastaId, @RequestBody MessageDto messageDto) {
@@ -112,4 +114,18 @@ public class WebSocketHandler extends StompSessionHandlerAdapter{
         msgt.convertAndSend("/topic/subasta/crear", subasta);
         return new ResponseEntity<>(newSubasta, HttpStatus.OK);
     }
-}
+
+    @MessageMapping("/{subastaId}/{usuario}/unirse")
+    public ResponseEntity<Subasta> unirseSubasta(@DestinationVariable int subastaId,
+            @DestinationVariable String usuario) {
+        Usuario user = usuarioService.getUsuarioByUserName(usuario).get();
+        Optional<Subasta> subasta = subastaService.getSubastaById(subastaId);
+        if (subasta.isPresent()) {
+            subastaService.añadirParticipante(subastaId, user);
+            msgt.convertAndSend("/topic/subasta/" + subastaId + "/" + usuario +"/unirse", subasta);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+} 

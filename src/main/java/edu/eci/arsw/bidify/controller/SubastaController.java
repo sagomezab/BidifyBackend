@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 import edu.eci.arsw.bidify.service.SubastaService;
+import edu.eci.arsw.bidify.service.UsuarioService;
 import edu.eci.arsw.bidify.dto.MessageDto;
 import edu.eci.arsw.bidify.dto.SubastaDto;
 import edu.eci.arsw.bidify.model.Subasta;
@@ -19,6 +20,8 @@ public class SubastaController{
     @Autowired
     private SubastaService subastaService;
 
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<List<Subasta>> getAllSubastas() {
@@ -46,12 +49,4 @@ public class SubastaController{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
-       
-    
-    
-    
-    
-    
-
 }

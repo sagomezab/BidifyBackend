@@ -63,4 +63,8 @@ public class Subasta {
         this.estado = estado;
     }
 
+    public void añadirOferente(Usuario oferente) {
+        oferentes.add(oferente);
+        cantidadDeOfertantes = oferentes.size();
+    }
 }
