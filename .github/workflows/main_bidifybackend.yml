@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'BidifyBackend'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_149E333E04E041848069E1DF7079454E }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FA4CFDBCA7B9407B85DE86C6D319F63D }}
           package: '*.jar'
