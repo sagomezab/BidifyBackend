@@ -36,18 +36,18 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: java-app
-
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'BidifyBackend'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FA4CFDBCA7B9407B85DE86C6D319F63D }}
           package: '*.jar'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FDCDEA8CD00D40D893939693EA38F52C }}
